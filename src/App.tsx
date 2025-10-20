@@ -1,7 +1,10 @@
+import Button from "./components/button";
+
 function App() {
   return (
-    <div>
-      <h1>Hello i'm here!</h1>
+    <div className="flex gap-3 px-2 py-2">
+      <Button>AGENDAR</Button>
+      <Button disabled>AGENDAR</Button>
     </div>
   );
 }
