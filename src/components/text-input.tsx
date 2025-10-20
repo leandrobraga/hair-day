@@ -27,6 +27,7 @@ interface InputTextProps
 export default function TextInput({
   size,
   disabled,
+  className,
   ...props
 }: InputTextProps) {
   return (
@@ -39,6 +40,7 @@ export default function TextInput({
         className={cx(
           inputTextVariants({ size, disabled }),
           "placeholder-gray-400 text-gray-200",
+          className,
         )}
         {...props}
       />
