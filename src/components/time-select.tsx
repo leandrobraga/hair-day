@@ -28,9 +28,9 @@ export default function TimeSelect({ name, ...props }: TimeSelectProps) {
               {timeGroup.title}
             </Text>
             <div className="flex flex-wrap gap-4">
-              {timeGroup.times.map((time) => {
+              {timeGroup.times.map((time, index) => {
                 return (
-                  <label className="cursor-pointer">
+                  <label key={`${time}-${index}`} className="cursor-pointer">
                     <input
                       {...props}
                       checked={selected === time}

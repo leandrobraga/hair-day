@@ -1,14 +1,33 @@
+import { format } from "date-fns";
+import { useState } from "react";
 import Button from "../components/button";
 import Select from "../components/select";
 import Text from "../components/text";
 import TextInput from "../components/text-input";
 import TimeSelect from "../components/time-select";
+import useAppointment from "../hooks/use-appointment";
+import type { Appointment } from "../models/appointment";
 import AppName from "./app-name";
 import Title from "./title";
 
+const today = format(new Date(), "dd/MM/yyyy");
+
 export default function SideBar() {
+  const [selectedDay, setSelectedDay] = useState(today);
+  const { isSubmitting, saveAppointment } = useAppointment();
   function handleSaveAppointment(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+
+    const appointment: Appointment = {
+      id: crypto.randomUUID(),
+      clientName: data.clientName as string,
+      date: data.date as string,
+      time: data.time as string,
+    };
+    saveAppointment(appointment);
+    e.currentTarget.reset();
   }
 
   return (
@@ -26,7 +45,11 @@ export default function SideBar() {
             <Text variant="body-md-bold" className="text-gray-200">
               Data
             </Text>
-            <Select />
+            <Select
+              name="date"
+              selectedDay={selectedDay}
+              setSelectedDay={setSelectedDay}
+            />
           </div>
           <TimeSelect name="time" />
           <div className="flex flex-col gap-2">
@@ -34,11 +57,14 @@ export default function SideBar() {
               Cliente
             </Text>
             <TextInput
+              name="clientName"
               className="w-full"
               placeholder="Digite o nome do cliente"
             />
           </div>
-          <Button type="submit">AGENDAR</Button>
+          <Button disabled={isSubmitting} type="submit">
+            {isSubmitting ? "AGUARDE..." : "AGENDAR"}
+          </Button>
         </form>
       </div>
     </>

@@ -1,46 +1,132 @@
+import { useEffect, useState } from "react";
+import useLocalStorage from "use-local-storage";
+import CloudSunIcon from "../assets/icons/cloud-sun.svg?react";
+import MoonIcon from "../assets/icons/moon-stars.svg?react";
 import SunIcon from "../assets/icons/sun.svg?react";
-import TrashIcon from "../assets/icons/trash.svg?react";
-import { type Appointment } from "../models/appointment";
+import BinIcon from "../assets/icons/trash.svg?react";
+import { getAppointmentsByDayParts } from "../helpers/utils";
+import { type Appointment, APPOINTMENT_KEY } from "../models/appointment";
 import Icon from "./icon";
 import Text from "./text";
 
 interface ScheduleProps {
-  appointments: Appointment[];
+  filterDay: string;
 }
 
-export default function Schedule({ appointments }: ScheduleProps) {
+export default function Schedule({ filterDay }: ScheduleProps) {
+  const [morning, setMorning] = useState<Array<Appointment>>([]);
+  const [afternoon, setAfternoon] = useState<Array<Appointment>>([]);
+  const [night, setNight] = useState<Array<Appointment>>([]);
+  const [appointments] = useLocalStorage<Appointment[]>(APPOINTMENT_KEY, []);
+
+  useEffect(() => {
+    const [m, a, n] = getAppointmentsByDayParts(appointments, filterDay);
+    setMorning(m);
+    setAfternoon(a);
+    setNight(n);
+  }, [appointments, filterDay]);
+
   return (
-    <>
-      {appointments.map((appointment) => {
-        return (
-          <>
-            <div className="flex justify-between items-center border-1 border-gray-600 rounded-t-lg h-11">
-              <div className="flex gap-2 pl-4">
-                <Icon className="text-yellow-dark h-5 w-5" svg={SunIcon} />
-                <Text className="text-gray-300" variant="body-sm-regular">
-                  Manhã
-                </Text>
-              </div>
-              <div className="pr-4">
-                <Text className="text-gray-300" variant="body-sm-regular">
-                  09h-12h
-                </Text>
-              </div>
-            </div>
-            <div className="flex justify-between items-center gap-3 p-4 border-1 border-gray-600 rounded-b-lg">
+    <div>
+      <div className="flex justify-between items-center border-1 border-gray-600 rounded-t-lg h-11">
+        <div className="flex gap-2 pl-4">
+          <Icon className="text-yellow-dark h-5 w-5" svg={SunIcon} />
+          <Text className="text-gray-300" variant="body-sm-regular">
+            Manhã
+          </Text>
+        </div>
+        <div className="pr-4">
+          <Text className="text-gray-300" variant="body-sm-regular">
+            09h-12h
+          </Text>
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 p-4 border-1 border-gray-600 rounded-b-lg">
+        {morning.map((appointment, index) => {
+          return (
+            <div
+              key={`${appointment.time}-${index}`}
+              className="flex justify-between"
+            >
               <div className="flex gap-5">
                 <Text className="text-gray-200" variant="body-md-bold">
                   {appointment.time}
                 </Text>
                 <Text className="text-gray-200" variant="body-md-regular">
-                  {appointment.date}
+                  {appointment.clientName}
                 </Text>
               </div>
-              <Icon svg={TrashIcon} className="text-yellow-dark w-5 h-5" />
+              <Icon svg={BinIcon} className="text-yellow-dark w-5 h-5" />
             </div>
-          </>
-        );
-      })}
-    </>
+          );
+        })}
+      </div>
+      <div className="flex justify-between items-center border-1 border-gray-600 rounded-t-lg h-11">
+        <div className="flex gap-2 pl-4">
+          <Icon className="text-yellow-dark h-5 w-5" svg={CloudSunIcon} />
+          <Text className="text-gray-300" variant="body-sm-regular">
+            Tarde
+          </Text>
+        </div>
+        <div className="pr-4">
+          <Text className="text-gray-300" variant="body-sm-regular">
+            13h-18h
+          </Text>
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 p-4 border-1 border-gray-600 rounded-b-lg">
+        {afternoon.map((appointment, index) => {
+          return (
+            <div
+              key={`${appointment.time}-${index}`}
+              className="flex justify-between"
+            >
+              <div className="flex gap-5">
+                <Text className="text-gray-200" variant="body-md-bold">
+                  {appointment.time}
+                </Text>
+                <Text className="text-gray-200" variant="body-md-regular">
+                  {appointment.clientName}
+                </Text>
+              </div>
+              <Icon svg={BinIcon} className="text-yellow-dark w-5 h-5" />
+            </div>
+          );
+        })}
+      </div>
+      <div className="flex justify-between items-center border-1 border-gray-600 rounded-t-lg h-11">
+        <div className="flex gap-2 pl-4">
+          <Icon className="text-yellow-dark h-5 w-5" svg={MoonIcon} />
+          <Text className="text-gray-300" variant="body-sm-regular">
+            Noite
+          </Text>
+        </div>
+        <div className="pr-4">
+          <Text className="text-gray-300" variant="body-sm-regular">
+            19-21h
+          </Text>
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 p-4 border-1 border-gray-600 rounded-b-lg">
+        {night.map((appointment, index) => {
+          return (
+            <div
+              key={`${appointment.time}-${index}`}
+              className="flex justify-between"
+            >
+              <div className="flex gap-5">
+                <Text className="text-gray-200" variant="body-md-bold">
+                  {appointment.time}
+                </Text>
+                <Text className="text-gray-200" variant="body-md-regular">
+                  {appointment.clientName}
+                </Text>
+              </div>
+              <Icon svg={BinIcon} className="text-yellow-dark w-5 h-5" />
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
