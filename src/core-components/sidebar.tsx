@@ -51,7 +51,7 @@ export default function SideBar() {
               setSelectedDay={setSelectedDay}
             />
           </div>
-          <TimeSelect name="time" />
+          <TimeSelect name="time" filterDay={selectedDay} />
           <div className="flex flex-col gap-2">
             <Text variant="body-md-bold" className="text-gray-200">
               Cliente
